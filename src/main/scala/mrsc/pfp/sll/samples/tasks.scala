@@ -68,7 +68,7 @@ object SLLTasks {
     gIdle(Nil()) = Nil();
     """
 
-  val tasks = List(
+  val tasks: List[SLLTask] = List(
     SLLTask("gApp(x, y)", listProgram),
     SLLTask("gApp(gApp(x, y), z)", listProgram),
     SLLTask("gApp(gApp(x, y), y)", listProgram),
@@ -87,7 +87,7 @@ object SLLTasks {
     SLLTask("gOr(gEven(x), gOdd(x))", peanoProgram),
     SLLTask("gOr(gEven(x), gOdd(x))", peanoProgram))
 
-  val namedTasks =
+  val namedTasks: Map[String,SLLTask] =
     Map(
       "NaiveReverse" -> SLLTask("gRev(xs)", listProgram),
       "FastReverse" -> SLLTask("gFRev(xs, Nil())", listProgram),
@@ -111,6 +111,6 @@ object SLLTasks {
       "EvenSqr" -> SLLTask("gEven(gMult(m, m))", peanoProgram),
       "Idle" -> SLLTask("gIdle(xs)", listProgram))
 
-  val task1 = SLLTask("gFib(S(S(S(S(S(S(Z())))))))", peanoProgram)
-  val task2 = SLLTask("gRev(Cons(A(), Cons(B(), Cons(C(), Nil()))))", listProgram)
+  val task1: SLLTask = SLLTask("gFib(S(S(S(S(S(S(Z())))))))", peanoProgram)
+  val task2: SLLTask = SLLTask("gRev(Cons(A(), Cons(B(), Cons(C(), Nil()))))", listProgram)
 }

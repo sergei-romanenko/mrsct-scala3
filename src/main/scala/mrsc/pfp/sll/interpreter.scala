@@ -34,7 +34,7 @@ private class SLLInterpreter(program: Program)
 
   def caseObservableCtr(ctr: Ctr): Ctr = ctr
 
-  def caseObservableVar(v: Var) =
+  def caseObservableVar(v: Var): R =
     throw new Error("unexpected expression: " + v)
 
   def caseFRedex(ctx: Ctx, fcall: FCall): Expr = {

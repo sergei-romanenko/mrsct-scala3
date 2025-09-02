@@ -1,3 +1,4 @@
+// scalaVersion := "3.7.2"
 scalaVersion := "2.13.16"
 
 name := "mrsct"
@@ -17,11 +18,15 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.18.1" % "test"
 libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
 
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
+// scalacOptions ++= Seq("-source 3.4-migration", "-rewrite")
+// scalacOptions ++= Seq("-source 3.7-migration")
 
 libraryDependencies += "org.bitbucket.inkytonik.kiama" %% "kiama" % "2.5.1"
 
+// libraryDependencies += "org.specs2" %% "specs2-core" % "5.6.4" % "test"
 libraryDependencies += "org.specs2" %% "specs2-core" % "4.21.0" % "test"
 
+// libraryDependencies += "org.specs2" %% "specs2-junit" % "5.6.4" % "test"
 libraryDependencies += "org.specs2" %% "specs2-junit" % "4.21.0" % "test"
 
 Test / scalacOptions ++= Seq("-Yrangepos")

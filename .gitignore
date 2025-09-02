@@ -4,6 +4,7 @@
 /project
 /target
 /mrsc.iml
+/.bloop
 /.bsp
 /.idea
 /.metals

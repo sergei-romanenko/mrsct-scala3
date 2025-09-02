@@ -20,7 +20,7 @@ trait GraphBuilder[C, D] extends GraphTypes[C, D] {
 
 trait BasicGraphBuilder[C, D] extends GraphBuilder[C, D] {
 
-  def completeCurrentNode()(g: G) =
+  def completeCurrentNode()(g: G): SGraph[C,D] =
     SGraph(g.incompleteLeaves.tail,
       g.current :: g.completeLeaves,
       g.current :: g.completeNodes)

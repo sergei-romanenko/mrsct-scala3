@@ -65,12 +65,12 @@ sealed abstract class Def {
 }
 
 case class FFun(name: String, args: List[Name], term: Expr) extends Def {
-  override val lhs = FCall(name, args map Var)
+  override val lhs: FCall = FCall(name, args map Var)
   override val rhs: Expr = term
 }
 
 case class GFun(name: String, p: Pat, args: List[Name], term: Expr) extends Def {
-  override val lhs = GCall(name, Ctr(p.name, p.args map Var) :: (args map Var))
+  override val lhs: GCall = GCall(name, Ctr(p.name, p.args map Var) :: (args map Var))
   override val rhs: Expr = term
 }
 
@@ -146,7 +146,7 @@ object SLLParsers extends StandardTokenParsers with ImplicitConversions {
   def gcall: SLLParsers.Parser[GCall] =
     gid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ GCall
 
-  def parseProg(s: String) = Program(prog(new lexical.Scanner(new Reader(s))).get)
+  def parseProg(s: String): Program = Program(prog(new lexical.Scanner(new Reader(s))).get)
 
   def parseExpr(s: String): Expr =
     term(new lexical.Scanner(new Reader(s))).get

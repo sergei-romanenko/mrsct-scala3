@@ -11,7 +11,7 @@ object GraphSpec extends mutable.Specification {
 
   def mkGraph(root: SNode[Int, Int] = null,
       nodes: List[SNode[Int, Int]] = List(),
-      leaves: List[SNode[Int, Int]] = List()) = {
+      leaves: List[SNode[Int, Int]] = List()): SGraph[Int,Int] = {
     SGraph(List(), leaves, nodes)
   }  
 }

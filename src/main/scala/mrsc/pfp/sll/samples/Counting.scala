@@ -25,7 +25,7 @@ object Counting extends App {
     gLastNil(Nil()) = Nil(); 
     """
 
-  val tasks = List(
+  val tasks: List[SLLTask] = List(
     SLLTask("gApp(xs, ys)", program),
     SLLTask("gApp(xs, xs)", program),
     SLLTask("gLastNil(gApp(xs, xs))", program),
