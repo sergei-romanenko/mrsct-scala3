@@ -46,7 +46,7 @@ object SLLResiduator extends Residuation[Expr] {
     case children @ n1 :: ns => n1.driveInfo match {
       case TransientStepInfo =>
         fold(tree, n1.node)
-      case DecomposeStepInfo(compose) =>
+      case DecomposeStepInfo[Expr](compose) =>
         compose(children map { _.node } map { fold(tree, _) })
       case VariantsStepInfo(_) =>
         val (fname, vs @ v :: vars1) = gSignature(n) : @unchecked

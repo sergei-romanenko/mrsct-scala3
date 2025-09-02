@@ -41,14 +41,14 @@ class GraphGeneratorSpec extends mutable.Specification {
 
   "GraphGenerator with deterministic transformer" should {
 
-    val tgraphs = GraphGenerator(TinyTransformer, 0) map Transformations.transpose toList
+    val tGraphs = (GraphGenerator(TinyTransformer, 0) map Transformations.transpose).toList
 
     "produce just 1 result" in {
-      tgraphs.size must_== 1
+      tGraphs.size must_== 1
     }
 
     "build graph in depth first manner" in {
-      tgraphs(0) must_== graph
+      tGraphs(0) must_== graph
     }
   }
 

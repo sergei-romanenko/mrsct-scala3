@@ -1,7 +1,7 @@
-// scalaVersion := "3.7.2"
-scalaVersion := "2.13.16"
+scalaVersion := "3.7.2"
+// scalaVersion := "2.13.16"
 
-name := "mrsct"
+name := "mrsct-scala3"
 
 version := "0.1.0"
 
@@ -29,7 +29,7 @@ libraryDependencies += "org.specs2" %% "specs2-core" % "4.21.0" % "test"
 // libraryDependencies += "org.specs2" %% "specs2-junit" % "5.6.4" % "test"
 libraryDependencies += "org.specs2" %% "specs2-junit" % "4.21.0" % "test"
 
-Test / scalacOptions ++= Seq("-Yrangepos")
+// Test / scalacOptions ++= Seq("-Yrangepos")
 
 Test / testOptions += Tests.Argument("-oD")
 

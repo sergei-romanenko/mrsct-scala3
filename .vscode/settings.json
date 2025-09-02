@@ -5,7 +5,7 @@
     "cSpell.customDictionaries": {
         "custom-dictionary-workspace": {
             "name": "custom-dictionary-workspace",
-            "path": "${workspaceFolder:mrsct}/.cspell/custom-dictionary-workspace.txt",
+            "path": "${workspaceFolder:mrsct-scala3}/.cspell/custom-dictionary-workspace.txt",
             "addWords": true,
             "scope": "workspace"
         }

@@ -1,11 +1,14 @@
 # Custom Dictionary Words
 cands
 combinators
+deff
+fargs
 fcall
 fdef
 fnode
 fpath
 Futurebus
+gargs
 gcall
 homeomorphic
 kiama
