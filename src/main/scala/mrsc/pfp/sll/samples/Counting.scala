@@ -6,7 +6,7 @@ import mrsc.core._
 import mrsc.pfp._
 import mrsc.pfp.sll._
 
-object Counting extends App {
+object Counting extends App:
 
   case class CountingResult(completed: Int, residuals: Set[Expr])
 
@@ -53,23 +53,20 @@ object Counting extends App {
   implicit val exprOrdering: Ordering[Expr] = Ordering.by(_.size)
 
   def sc(gen: Iterator[SGraph[Expr, DriveInfo[Expr]]],
-         limit: Int): Either[CountingResult, CountingResult] = {
+         limit: Int): Either[CountingResult, CountingResult] =
     var completed = 0
     var unworkable = 0
     var residuals = TreeSet[Expr]()
-    for (g <- gen) {
+    for g <- gen do
       completed += 1
       val tg = Transformations.transpose(g)
       val expr = SLLResiduator.residuate(tg)
       residuals += expr
-      if (completed > limit) {
+      if completed > limit then
         return Left(CountingResult(completed, residuals))
-      }
-    }
     Right(CountingResult(completed, residuals))
-  }
 
-  def compareScWithBinaryWhistle(task: SLLTask, whistle: PartialOrdering[Expr], limit: Int = 5000): Unit = {
+  def compareScWithBinaryWhistle(task: SLLTask, whistle: PartialOrdering[Expr], limit: Int = 5000): Unit =
     println()
     println("===== " + task.target + " ====")
 
@@ -85,13 +82,11 @@ object Counting extends App {
     transformers.foreach { m =>
       val gen = GraphGenerator(m, task.target)
       val res = sc(gen, limit)
-      res match {
+      res match
         case Left(res1) => print("- " + (res1.completed, res1.residuals.size))
         case Right(res1) => print("+ " + (res1.completed, res1.residuals.size))
-      }
       println("\t" + m.getClass.getSimpleName)
     }
-  }
 
   println("======================")
   println("====   Coupling   ====")
@@ -101,4 +96,3 @@ object Counting extends App {
   println("==== CouplingRedex ====")
   println("======================")
   tasks.foreach(compareScWithBinaryWhistle(_, HEByCouplingWithRedexWhistle, 1000000))
-}

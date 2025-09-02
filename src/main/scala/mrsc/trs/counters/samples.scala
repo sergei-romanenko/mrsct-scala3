@@ -3,17 +3,15 @@ package mrsc.trs.counters
 import mrsc.core._
 import mrsc.trs._
 
-trait LGen extends TRSSyntax[Conf] {
+trait LGen extends TRSSyntax[Conf]:
   val l: Int
   override def rebuildings(c: Conf) =
-    List(c.map { e => if (e >= l) Omega else e })
-}
+    List(c.map { e => if e >= l then Omega else e })
 
-trait ProtocolSafetyAware extends SafetyAware[Conf, Int] {
+trait ProtocolSafetyAware extends SafetyAware[Conf, Int]:
   val protocol: Protocol
   override def unsafe(counter: Conf): Boolean =
     protocol.unsafe(counter)
-}
 
 trait CounterTransformer
   extends BasicGraphBuilder[Conf, Int]
@@ -34,51 +32,45 @@ case class CounterMultiResultTransformer(protocol: Protocol, l: Int)
   with ProtocolSafetyAware
   with SimpleGensWithUnaryWhistle[Conf, Int]
 
-object CounterSamples extends App {
+object CounterSamples extends App:
 
   def graphSize(g: TGraph[_, _]): Int =
     size(g.root)
 
   def size(n: TNode[_, _]): Int = 1 + n.outs.map(out => size(out.node)).sum
 
-  def scProtocol(protocol: Protocol, l: Int): Unit = {
+  def scProtocol(protocol: Protocol, l: Int): Unit =
     val transformer = CounterSingleResultTransformer(protocol, l)
     val graphs = GraphGenerator(transformer, protocol.start)
 
-    for (graph <- graphs if graph.isComplete) {
+    for graph <- graphs if graph.isComplete do
       val tGraph = Transformations.transpose(graph)
       println("================================")
       println()
       println(tGraph)
       val isSafe = checkSubTree(protocol.unsafe)(tGraph.root)
       println(isSafe)
-    }
-  }
 
-  def multiScProtocol(protocol: Protocol, l: Int): Unit = {
+  def multiScProtocol(protocol: Protocol, l: Int): Unit =
     val transformer = CounterMultiResultTransformer(protocol, l)
     val graphs = GraphGenerator(transformer, protocol.start)
     val successGraphs = graphs filter (_.isComplete) map Transformations.transpose
     //val successGraphs = tGraphs.filter { g => checkSubTree(protocol.unsafe)(g.root) }
-    if (successGraphs.nonEmpty) {
+    if successGraphs.nonEmpty then
       val minGraph = successGraphs.minBy(graphSize)
       println(minGraph)
-    }
-  }
 
   def checkSubTree(unsafe: Conf => Boolean)(node: TNode[Conf, _]): Boolean =
     !unsafe(node.conf) && node.outs.map(_.node).forall(checkSubTree(unsafe))
 
-  def verifyProtocol(protocol: Protocol, findMinimalProof: Boolean = true): Unit = {
+  def verifyProtocol(protocol: Protocol, findMinimalProof: Boolean = true): Unit =
     println()
     println(protocol)
     scProtocol(protocol, 2)
-    if (findMinimalProof) {
+    if findMinimalProof then
       multiScProtocol(protocol, 2)
-    } else {
+    else
       println("skipping quest for minimal proof")
-    }
-  }
 
   verifyProtocol(Synapse)
   verifyProtocol(MSI)
@@ -93,4 +85,3 @@ object CounterSamples extends App {
   verifyProtocol(Java, findMinimalProof = false) // too many variants here
   verifyProtocol(ReaderWriter)
   verifyProtocol(DataRace)
-}

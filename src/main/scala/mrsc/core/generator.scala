@@ -11,15 +11,13 @@ import scala.collection.mutable.ListBuffer
   multi-result supercompilation.
  */
 
-trait GraphTypes[C, D] {
+trait GraphTypes[C, D]:
   type N = SNode[C, D]
   type G = SGraph[C, D]
   type GG = SGraph[C, D] => SGraph[C, D]
-}
 
-trait Transformer[C, D] extends GraphTypes[C, D] {
+trait Transformer[C, D] extends GraphTypes[C, D]:
   def descendants(g: G): List[G]
-}
 
 /*!# Generating graphs.
  
@@ -31,7 +29,7 @@ trait Transformer[C, D] extends GraphTypes[C, D] {
 
 case class GraphGenerator[C, D](transformer: Transformer[C, D], conf: C)
   extends Iterator[SGraph[C, D]]
-    with GraphTypes[C, D] {
+    with GraphTypes[C, D]:
 
   /*! It maintains a list of graphs
      * and starts with a one-element list of graphs. 
@@ -41,26 +39,21 @@ case class GraphGenerator[C, D](transformer: Transformer[C, D], conf: C)
   private var gs: List[G] = List(SGraph.initial[C, D](conf))
 
   private def normalize(): Unit =
-    while (completeGs.isEmpty && gs.nonEmpty) {
+    while completeGs.isEmpty && gs.nonEmpty do
       val pendingDelta = ListBuffer[G]()
       val h = gs.head
       val newGs = transformer.descendants(h)
-      for (g1 <- newGs)
-        if (g1.isComplete) {
+      for g1 <- newGs do
+        if g1.isComplete then
           completeGs.enqueue(g1)
-        } else {
+        else
           pendingDelta += g1
-        }
       gs = pendingDelta ++: gs.tail
-    }
 
-  def hasNext: Boolean = {
+  def hasNext: Boolean =
     normalize()
     completeGs.nonEmpty
-  }
 
-  def next(): G = {
-    if (!hasNext) throw new NoSuchElementException("no graph")
+  def next(): G =
+    if !hasNext then throw new NoSuchElementException("no graph")
     completeGs.dequeue()
-  }
-}

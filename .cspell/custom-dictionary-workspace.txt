@@ -18,6 +18,10 @@ MOESI
 MOSI
 mrsc
 mrsct
+Mult
+Plusa
+Plusb
+Plusc
 prevs
 rebuildings
 Redex

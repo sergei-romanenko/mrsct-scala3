@@ -23,8 +23,7 @@ object PrettySLL extends org.kiama.output.PrettyPrinter {
 }
 */
 
-object PrettySLL {
+object PrettySLL:
 
   def pretty(t: Expr): String = t.toString
 
-}

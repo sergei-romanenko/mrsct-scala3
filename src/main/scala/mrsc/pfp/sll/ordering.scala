@@ -2,7 +2,7 @@ package mrsc.pfp.sll
 
 import mrsc.core.SimplePartialOrdering
 
-object HE {
+object HE:
   def he_*(t1: Expr, t2: Expr): Boolean = he(t1, t2) && b(t1) == b(t2)
 
   def he(t1: Expr, t2: Expr): Boolean =
@@ -28,70 +28,56 @@ object HE {
       case _ => false
     })
 
-  def b(t: Expr): Int = t match {
+  def b(t: Expr): Int = t match
     case GCall(_, args) => b(args.head)
     case Var(_) => 1
     case _ => 0
-  }
-}
 
-object HEWhistle extends SimplePartialOrdering[Expr] {
+object HEWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"
 
-  def lteq(e1: Expr, e2: Expr): Boolean = e2 match {
+  def lteq(e1: Expr, e2: Expr): Boolean = e2 match
     case Let(_, _) => false
     case Ctr(_, _) => false
     case _ =>
-      e1 match {
+      e1 match
         case Let(_, _) => false
         case Ctr(_, _) => false
         case _ => HE.he(e1, e2)
-      }
-  }
-}
 
-object HEWithRedexWhistle extends SimplePartialOrdering[Expr] {
+object HEWithRedexWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"
 
-  def lteq(e1: Expr, e2: Expr): Boolean = e2 match {
+  def lteq(e1: Expr, e2: Expr): Boolean = e2 match
     case Let(_, _) => false
     case Ctr(_, _) => false
     case _ =>
-      e1 match {
+      e1 match
         case Let(_, _) => false
         case Ctr(_, _) => false
         case _ => HE.he_*(e1, e2)
-      }
-  }
-}
 
-object HEByCouplingWhistle extends SimplePartialOrdering[Expr] {
+object HEByCouplingWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"
 
-  def lteq(e1: Expr, e2: Expr): Boolean = e2 match {
+  def lteq(e1: Expr, e2: Expr): Boolean = e2 match
     case Let(_, _) => false
     case Ctr(_, _) => false
     case _ =>
-      e1 match {
+      e1 match
         case Let(_, _) => false
         case Ctr(_, _) => false
         case _ => HE.heByCoupling(e1, e2)
-      }
-  }
-}
 
-object HEByCouplingWithRedexWhistle extends SimplePartialOrdering[Expr] {
+object HEByCouplingWithRedexWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"
 
-  def lteq(e1: Expr, e2: Expr): Boolean = e2 match {
+  def lteq(e1: Expr, e2: Expr): Boolean = e2 match
     case Let(_, _) => false
     case Ctr(_, _) => false
     case _ =>
-      e1 match {
+      e1 match
         case Let(_, _) => false
         case Ctr(_, _) => false
         case _ =>
           HE.heByCoupling(e1, e2) && HE.b(e1) == HE.b(e2)
-      }
-  }
-}

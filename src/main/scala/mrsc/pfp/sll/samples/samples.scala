@@ -1,5 +1,7 @@
 package mrsc.pfp.sll.samples
 
+import scala.util.boundary, boundary.break
+
 import mrsc.core._
 import mrsc.pfp._
 import mrsc.pfp.sll._
@@ -71,7 +73,7 @@ class ClassicCurrentGen(val program: Program, val ordering: PartialOrdering[Expr
     with BinaryWhistle[Expr]
     with MSGCurrentOrDriving[Expr]
 
-object Samples {
+object Samples:
   //type Transformer1 = Transformer[Expr, DriveInfo[Expr], Extra[Expr]]
 
   def multi1(w: PartialOrdering[Expr])(p: Program) = new MultiAllRebuildings(p, w)
@@ -88,31 +90,27 @@ object Samples {
 
   def classic3(w: PartialOrdering[Expr])(p: Program) = new MultiDoubleMsg(p, w)
 
-  private def expand(n: Int, s: String): String = {
+  private def expand(n: Int, s: String): String =
     val init = " " * n
     val tmp = s + init
     tmp take n
-  }
 
-  private def expandRight(n: Int, s: String): String = {
+  private def expandRight(n: Int, s: String): String =
     val init = " " * n
     val tmp = init + s
     tmp takeRight n
-  }
 
-  private def residuateAndCheck(gen: GraphGenerator[Expr, DriveInfo[Expr]], task: SLLTask): Unit = {
-    for (g <- gen if g.isComplete) {
+  private def residuateAndCheck(gen: GraphGenerator[Expr, DriveInfo[Expr]], task: SLLTask): Unit =
+    for g <- gen if g.isComplete do
       val t = Transformations.transpose(g)
       println(t)
       val res = SLLResiduator.residuate(t)
       println(PrettySLL.pretty(res))
       Checker.check(task, Lifting.expr2Task(res))
-    }
-  }
 
   // just tries classic variants of 
   // SLL supercompilation
-  def showResidualPrograms(task: SLLTask): Unit = {
+  def showResidualPrograms(task: SLLTask): Unit =
 
     println("************************")
     println(task.target)
@@ -123,13 +121,10 @@ object Samples {
       println("**classic+ up:**")
       val m1 = classic1(HEByCouplingWhistle)(task.program)
       residuateAndCheck(GraphGenerator(m1, task.target), task)
-    }
 
-    {
       println("**classic+ down:**")
       val m2 = classic2(HEByCouplingWhistle)(task.program)
       residuateAndCheck(GraphGenerator(m2, task.target), task)
-
     }
 
     println("**others:**")
@@ -137,17 +132,14 @@ object Samples {
     {
       val m3 = classic3(HEByCouplingWhistle)(task.program)
       residuateAndCheck(GraphGenerator(m3, task.target), task)
-    }
 
-    {
-      val m3 = classic3(HEByCouplingWithRedexWhistle)(task.program)
-      residuateAndCheck(GraphGenerator(m3, task.target), task)
+      val m4 = classic3(HEByCouplingWithRedexWhistle)(task.program)
+      residuateAndCheck(GraphGenerator(m4, task.target), task)
     }
 
     println()
-  }
 
-  def showResidualProgramsForTasks(): Unit = {
+  def showResidualProgramsForTasks(): Unit =
 
     showResidualPrograms(SLLTasks.namedTasks("NaiveFib"))
     showResidualPrograms(SLLTasks.namedTasks("FastFib"))
@@ -168,26 +160,21 @@ object Samples {
     showResidualPrograms(SLLTasks.namedTasks("App"))
     showResidualPrograms(SLLTasks.namedTasks("Idle"))
 
-  }
 
   // count graphs
-  def count(gen: GraphGenerator[_, _], limit: Int = 1800): (Int, Int) = {
+  def count(gen: GraphGenerator[_, _], limit: Int = 1800): (Int, Int) =
     var completed = 0
     var unworkable = 0
-    for (g <- gen) {
-      if (g.isComplete) {
+    for g <- gen do
+      if g.isComplete then
         completed += 1
-      } else {
+      else
         unworkable += 1
-      }
-      if (completed + unworkable > limit) {
+      if completed + unworkable > limit then
         return (-1, -1)
-      }
-    }
     (completed, unworkable)
-  }
 
-  def countGraphs(task: SLLTask): Unit = {
+  def countGraphs(task: SLLTask): Unit =
     val info = expand(40, task.target.toString)
     print(info)
 
@@ -205,9 +192,8 @@ object Samples {
     }
 
     println()
-  }
 
-  def countGraphsForTasks(): Unit = {
+  def countGraphsForTasks(): Unit =
     println("Counting completed graphs")
     println()
     val header = expand(40, """Task \ Supercompiler""") + expandRight(12, "1") +
@@ -241,9 +227,8 @@ object Samples {
 
     println()
     println()
-  }
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
 
     // 85726 completed graphs here:
     //preRun(SLLTasks.namedTasks("FastFib"))
@@ -255,6 +240,4 @@ object Samples {
 
     showResidualProgramsForTasks()
 
-  }
 
-}

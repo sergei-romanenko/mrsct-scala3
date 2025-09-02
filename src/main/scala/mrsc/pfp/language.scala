@@ -22,7 +22,7 @@ import mrsc.core._
   However, in PFP setting we consider this relation as being total: syntactic approximation
   is used usually in traditional supercompilers.
  */
-trait PFPSyntax[C] {
+trait PFPSyntax[C]:
   def subst(c: C, sub: Subst[C]): C
   def findSubst(from: C, to: C): Option[Subst[C]]
   def rawRebuildings(c: C): List[RawRebuilding[C]]
@@ -33,23 +33,17 @@ trait PFPSyntax[C] {
     rawRebuildings(c) filterNot trivialRb(c) map translate
   def size(c: C): Int
   val subclass: PartialOrdering[C]
-}
 
-trait Residuation[C] {
+trait Residuation[C]:
   def residuate(graph: TGraph[C, DriveInfo[C]]): C
-}
 
-trait MSG[C] extends PFPSyntax[C] {
-  def msg(c1: C, c2: C): Option[RawRebuilding[C]] = {
+trait MSG[C] extends PFPSyntax[C]:
+  def msg(c1: C, c2: C): Option[RawRebuilding[C]] =
     val nonTrivialRbs = rawRebuildings(c1) filterNot trivialRb(c1)
     val sharedRbs = nonTrivialRbs filter { rb => subclass.gteq(rb._1, c2) }
     sharedRbs find { rb => sharedRbs forall { other => subclass.lteq(rb._1, other._1) } }
-  }
-}
 
-trait MutualGens[C] extends PFPSyntax[C] {
-  def mutualGens(c1: C, c2: C): List[RawRebuilding[C]] = {
+trait MutualGens[C] extends PFPSyntax[C]:
+  def mutualGens(c1: C, c2: C): List[RawRebuilding[C]] =
     val nonTrivialRbs = rawRebuildings(c1) filterNot trivialRb(c1)
     nonTrivialRbs filter { rb => subclass.gteq(rb._1, c2) }
-  } 
-}

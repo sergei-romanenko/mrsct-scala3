@@ -18,12 +18,12 @@ import SLLSyntax._
      
      Note, that this code is purely functional: no vars.
  */
-object SLLResiduator extends Residuation[Expr] {
+object SLLResiduator extends Residuation[Expr]:
 
   override def residuate(graph: TGraph[Expr, DriveInfo[Expr]]): Expr =
     SyntaxNormalization.fixNames(fold(graph, graph.root))
 
-  def fold(graph: TGraph[Expr, DriveInfo[Expr]], n: TNode[Expr, DriveInfo[Expr]]): Expr = n.base match {
+  def fold(graph: TGraph[Expr, DriveInfo[Expr]], n: TNode[Expr, DriveInfo[Expr]]): Expr = n.base match
     // base node
     case None if graph.leaves.exists(_.base.contains(n.tPath)) =>
       val (f, vars) = signature(n)
@@ -39,11 +39,10 @@ object SLLResiduator extends Residuation[Expr] {
       subst(call, findSubst(fnode.conf, n.conf).get)
     // transient reduction
     case _ => build(graph, n)
-  }
 
-  def build(tree: TGraph[Expr, DriveInfo[Expr]], n: TNode[Expr, DriveInfo[Expr]]): Expr = n.outs match {
+  def build(tree: TGraph[Expr, DriveInfo[Expr]], n: TNode[Expr, DriveInfo[Expr]]): Expr = n.outs match
     case Nil => n.conf
-    case children @ n1 :: ns => n1.driveInfo match {
+    case children @ n1 :: ns => n1.driveInfo match
       case TransientStepInfo =>
         fold(tree, n1.node)
       case DecomposeStepInfo[Expr](compose) =>
@@ -57,17 +56,12 @@ object SLLResiduator extends Residuation[Expr] {
         } sortBy (_.p.name)
         val call = GCall(fname, vs)
         Where(call, branches)
-    }
-  }
 
-  private def signature(node: TNode[Expr, DriveInfo[Expr]]): (String, List[Var]) = {
+  private def signature(node: TNode[Expr, DriveInfo[Expr]]): (String, List[Var]) =
     val fname = "f/" + node.tPath.mkString("/")
     (fname, vars(node.conf))
-  }
   
-  private def gSignature(node: TNode[Expr, DriveInfo[Expr]]): (String, List[Var]) = {
+  private def gSignature(node: TNode[Expr, DriveInfo[Expr]]): (String, List[Var]) =
     val fname = "g/" + node.tPath.mkString("/")
     (fname, vars(node.conf))
-  }
 
-}

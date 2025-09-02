@@ -5,56 +5,48 @@ import scala.util.parsing.combinator.syntactical.StandardTokenParsers
 import scala.util.parsing.input.{CharSequenceReader => Reader}
 import mrsc.pfp._
 
-sealed trait Expr {
-  val size: Int
-}
+sealed trait Expr:
+  lazy val size: Int
 
-case class Var(name: String) extends Expr {
-  val size = 1
+case class Var(name: String) extends Expr:
+  lazy val size = 1
 
   override def toString: String = name
-}
 
-case class Ctr(name: String, args: List[Expr]) extends Expr {
-  lazy val size: Int = 1 + args.map(_.size).sum
-
-  override def toString: Name = name + args.mkString("(", ", ", ")")
-}
-
-case class FCall(name: String, args: List[Expr]) extends Expr {
+case class Ctr(name: String, args: List[Expr]) extends Expr:
   lazy val size: Int = 1 + args.map(_.size).sum
 
   override def toString: Name = name + args.mkString("(", ", ", ")")
 
-}
-
-case class GCall(name: String, args: List[Expr]) extends Expr {
+case class FCall(name: String, args: List[Expr]) extends Expr:
   lazy val size: Int = 1 + args.map(_.size).sum
 
   override def toString: Name = name + args.mkString("(", ", ", ")")
-}
 
-case class Let(term: Expr, bindings: List[(Name, Expr)]) extends Expr {
+
+case class GCall(name: String, args: List[Expr]) extends Expr:
+  lazy val size: Int = 1 + args.map(_.size).sum
+
+  override def toString: Name = name + args.mkString("(", ", ", ")")
+
+case class Let(term: Expr, bindings: List[(Name, Expr)]) extends Expr:
   lazy val size: Int = 1 + bindings.map(_._2.size).sum
 
   override def toString: Name =
     "let " + (bindings map { case (x, y) => x + "=" + y } mkString ", ") +
       " in " + term
-}
 
-case class Where(e: Expr, defs: List[Def]) extends Expr {
+case class Where(e: Expr, defs: List[Def]) extends Expr:
   lazy val size: Int = 1 + defs.map(_.rhs.size).sum
 
   override def toString: Name =
     " let " + defs.mkString("{", " ", "}") + " in " + e
-}
 
-case class Pat(name: String, args: List[Name]) {
+case class Pat(name: String, args: List[Name]):
   override def toString: Name =
     name + args.mkString("(", ", ", ")")
-}
 
-sealed abstract class Def {
+sealed abstract class Def:
   def name: String
 
   def lhs: Expr
@@ -62,49 +54,40 @@ sealed abstract class Def {
   def rhs: Expr
 
   override def toString: Name = s"${lhs} = ${rhs};"
-}
 
-case class FFun(name: String, args: List[Name], term: Expr) extends Def {
-  override val lhs: FCall = FCall(name, args map Var)
+case class FFun(name: String, args: List[Name], term: Expr) extends Def:
+  override val lhs: FCall = FCall(name, args map Var.apply)
   override val rhs: Expr = term
-}
 
-case class GFun(name: String, p: Pat, args: List[Name], term: Expr) extends Def {
-  override val lhs: GCall = GCall(name, Ctr(p.name, p.args map Var) :: (args map Var))
+case class GFun(name: String, p: Pat, args: List[Name], term: Expr) extends Def:
+  override val lhs: GCall = GCall(name, Ctr(p.name, p.args map Var.apply) :: (args map Var.apply))
   override val rhs: Expr = term
-}
 
-case class Program(defs: List[Def]) {
+case class Program(defs: List[Def]):
   val f: Map[String, FFun] =
-    (defs foldRight Map[String, FFun]()) {
+    (defs foldRight Map[String, FFun]()):
       case (x: FFun, m) => m + (x.name -> x)
       case (_, m) => m
-    }
   val g: Map[(String, String), GFun] =
-    (defs foldRight Map[(String, String), GFun]()) {
+    (defs foldRight Map[(String, String), GFun]()):
       case (x: GFun, m) => m + ((x.name, x.p.name) -> x)
       case (_, m) => m
-    }
   val gs: Map[String, List[GFun]] =
-    (defs foldRight Map[String, List[GFun]]().withDefaultValue(Nil)) {
+    (defs foldRight Map[String, List[GFun]]().withDefaultValue(Nil)):
       case (x: GFun, m) => m + (x.name -> (x :: m(x.name)))
       case (_, m) => m
-    }
 
   override def toString: String = defs.mkString("\n")
-}
 
-case class SLLTask(target: Expr, program: Program) {
+case class SLLTask(target: Expr, program: Program):
   // override def toString: Name = target + "\n" + program
   override def toString: Name = s"${target}\n${program}"
-}
 
-object SLLTask {
+object SLLTask:
   def apply(e: String, p: String): SLLTask =
     SLLTask(SLLParsers.parseExpr(e), SLLParsers.parseProg(p))
-}
 
-object SLLParsers extends StandardTokenParsers with ImplicitConversions {
+object SLLParsers extends StandardTokenParsers with ImplicitConversions:
   lexical.delimiters.addAll(List("(", ")", ",", "=", ";"))
 
   def prog: SLLParsers.Parser[List[Def]] = rep1(definition)
@@ -126,28 +109,27 @@ object SLLParsers extends StandardTokenParsers with ImplicitConversions {
     ident ^? { case id if id.charAt(0) == 'g' => id }
 
   def vrb: SLLParsers.Parser[Var] =
-    lid ^^ Var
+    lid ^^ Var.apply
 
   def pat: SLLParsers.Parser[Pat] =
-    uid ~ ("(" ~> repsep(lid, ",") <~ ")") ^^ Pat
+    uid ~ ("(" ~> repsep(lid, ",") <~ ")") ^^ Pat.apply
 
   def fFun: SLLParsers.Parser[FFun] =
-    fid ~ ("(" ~> repsep(lid, ",") <~ ")") ~ ("=" ~> term <~ ";") ^^ FFun
+    fid ~ ("(" ~> repsep(lid, ",") <~ ")") ~ ("=" ~> term <~ ";") ^^ FFun.apply
 
   def gFun: SLLParsers.Parser[GFun] =
-    gid ~ ("(" ~> pat) ~ (rep("," ~> lid) <~ ")") ~ ("=" ~> term <~ ";") ^^ GFun
+    gid ~ ("(" ~> pat) ~ (rep("," ~> lid) <~ ")") ~ ("=" ~> term <~ ";") ^^ GFun.apply
 
   def ctr: SLLParsers.Parser[Ctr] =
-    uid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ Ctr
+    uid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ Ctr.apply
 
   def fcall: SLLParsers.Parser[FCall] =
-    fid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ FCall
+    fid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ FCall.apply
 
   def gcall: SLLParsers.Parser[GCall] =
-    gid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ GCall
+    gid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ GCall.apply
 
   def parseProg(s: String): Program = Program(prog(new lexical.Scanner(new Reader(s))).get)
 
   def parseExpr(s: String): Expr =
     term(new lexical.Scanner(new Reader(s))).get
-}

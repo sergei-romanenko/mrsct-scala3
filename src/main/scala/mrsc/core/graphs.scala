@@ -43,15 +43,14 @@ case class SNode[C, D](
   conf: C,
   in: SEdge[C, D],
   base: Option[SPath],
-  sPath: SPath) {
+  sPath: SPath):
 
   lazy val tPath: List[Int] = sPath.reverse
 
   val ancestors: List[SNode[C, D]] =
-    if (in == null) List() else in.node :: in.node.ancestors
+    if in == null then List() else in.node :: in.node.ancestors
 
   override def toString: String = conf.toString
-}
 
 case class SEdge[C, D](node: SNode[C, D], driveInfo: D)
 
@@ -67,18 +66,15 @@ case class SEdge[C, D](node: SNode[C, D], driveInfo: D)
 case class SGraph[C, D](
   incompleteLeaves: List[SNode[C, D]],
   completeLeaves: List[SNode[C, D]],
-  completeNodes: List[SNode[C, D]]) {
+  completeNodes: List[SNode[C, D]]):
 
   val isComplete: Boolean = incompleteLeaves.isEmpty
-  val current: SNode[C, D] = if (isComplete) null else incompleteLeaves.head
-}
+  val current: SNode[C, D] = if isComplete then null else incompleteLeaves.head
 
-object SGraph {
-  def initial[C, D](c: C): SGraph[C, D] = {
+object SGraph:
+  def initial[C, D](c: C): SGraph[C, D] =
     val initialNode = SNode[C, D](c, null, None, Nil)
     SGraph(List(initialNode), Nil, Nil)
-  }
-}
 
 /*! `TNode[C, D, E]` is a very simple and straightforward implementation of
  * a top-down node. 
@@ -87,18 +83,16 @@ case class TNode[C, D](
   conf: C,
   outs: List[TEdge[C, D]],
   base: Option[TPath],
-  tPath: TPath) {
+  tPath: TPath):
 
   lazy val sPath: List[Int] = tPath.reverse
 
   @tailrec
-  final def get(relTPath: TPath): TNode[C, D] = relTPath match {
+  final def get(relTPath: TPath): TNode[C, D] = relTPath match
     case Nil => this
     case i :: rp => outs(i).node.get(rp)
-  }
 
   override def toString: String = GraphPrettyPrinter.toString(node = this)
-}
 
 /*! The labeled directed edge. `node` is a destination node; `D` is driving info.
  */
@@ -116,10 +110,9 @@ case class TEdge[C, D](node: TNode[C, D], driveInfo: D)
  *`E` (extra information) is a type of extra label of a node (extra info). 
  * Extra information may be seen as an additional "instrumentation" of SC graph.
  */
-case class TGraph[C, D](root: TNode[C, D], leaves: List[TNode[C, D]]) {
+case class TGraph[C, D](root: TNode[C, D], leaves: List[TNode[C, D]]):
   def get(tPath: TPath): TNode[C, D] = root.get(tPath)
   override def toString: String = root.toString
-}
 
 /*! Auxiliary data for transposing a graph into a transposed graph.
  */
@@ -127,11 +120,11 @@ case class Tmp[C, D](node: TNode[C, D], in: SEdge[C, D])
 
 /*! A transformer of stack graphs into tree graphs.
  */
-object Transformations {
+object Transformations:
   /*! Transposition is done in the following simple way. Nodes are grouped according to the 
    levels (the root is 0-level). Then graphs are produced from in bottom-up fashion.
    */
-  def transpose[C, D, E](g: SGraph[C, D]): TGraph[C, D] = {
+  def transpose[C, D, E](g: SGraph[C, D]): TGraph[C, D] =
     require(g.isComplete)
     val orderedNodes = g.completeNodes.sortBy(_.sPath)(PathOrdering)
     val rootNode = orderedNodes.head
@@ -143,13 +136,12 @@ object Transformations {
     val nodes = tNodes map { _.node }
     val leaves = tLeaves map { _.node }
     TGraph(nodes.head, leaves)
-  }
 
   // sub-transposes graph into transposed graph level-by-level
   private def subTranspose[C, D](
     nodes: List[List[SNode[C, D]]],
     leaves: List[TPath]): (List[Tmp[C, D]], List[Tmp[C, D]]) =
-    nodes match {
+    nodes match
       case Nil =>
         (Nil, Nil)
 
@@ -176,40 +168,31 @@ object Transformations {
         val tmpLeaves = tmpNodes.filter { tmp => leaves.contains(tmp.node.sPath) }
         (tmpNodes, tmpLeaves ++ leaves1)
       }
-    }
-}
 
 /*! Ad Hoc console pretty printer for graphs.
  */
-object GraphPrettyPrinter {
-  def toString(node: TNode[_, _], indent: String = ""): String = {
+object GraphPrettyPrinter:
+  def toString(node: TNode[_, _], indent: String = ""): String =
     val sb = new StringBuilder(indent + "|__" + node.conf)
-    if (node.base.isDefined) {
+    if node.base.isDefined then
       sb.append("*******")
-    }
-    for (edge <- node.outs) {
-      sb.append("\n  " + indent + "|" + (if (edge.driveInfo != null) edge.driveInfo else ""))
+    for edge <- node.outs do
+      sb.append("\n  " + indent + "|" + (if edge.driveInfo != null then edge.driveInfo else ""))
       sb.append("\n" + toString(edge.node, indent + "  "))
-    }
     sb.toString
-  }
-}
 
 /*! The simple lexicographic order on paths.
  */
-object PathOrdering extends Ordering[TPath] {
+object PathOrdering extends Ordering[TPath]:
   @tailrec
   final def compare(p1: TPath, p2: TPath): Int =
-    if (p1.length < p2.length) {
+    if p1.length < p2.length then
       -1
-    } else if (p1.length > p2.length) {
+    else if p1.length > p2.length then
       +1
-    } else {
+    else
       val result = p1.head compare p2.head
-      if (result == 0) {
+      if result == 0 then
         compare(p1.tail, p2.tail)
-      } else {
+      else
         result
-      }
-    }
-}
