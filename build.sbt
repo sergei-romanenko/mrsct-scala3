@@ -18,9 +18,9 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.18.1" % "test"
 libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
 
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
-// scalacOptions ++= Seq("-source:3.2-migration", "-rewrite")
-// scalacOptions ++= Seq("-source:3.2-migration")
-// scalacOptions ++= Seq("-indent", "-rewrite")
+// scalacOptions ++= Seq("-source:3.4-migration")
+// scalacOptions ++= Seq("-source:3.7-migration")
+// scalacOptions ++= Seq("-rewrite")
 
 libraryDependencies += "org.bitbucket.inkytonik.kiama" %% "kiama" % "2.5.1"
 

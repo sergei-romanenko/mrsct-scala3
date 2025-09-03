@@ -126,12 +126,12 @@ object Transformations:
    */
   def transpose[C, D, E](g: SGraph[C, D]): TGraph[C, D] =
     require(g.isComplete)
-    val orderedNodes = g.completeNodes.sortBy(_.sPath)(PathOrdering)
+    val orderedNodes = g.completeNodes.sortBy(_.sPath)(using PathOrdering)
     val rootNode = orderedNodes.head
 
     val leafPaths = g.completeLeaves.map(_.sPath)
     val levels = orderedNodes.groupBy(_.sPath.length).toList.sortBy(_._1).map(_._2)
-    val sortedLevels = levels.map(_.sortBy(_.tPath)(PathOrdering))
+    val sortedLevels = levels.map(_.sortBy(_.tPath)(using PathOrdering))
     val (tNodes, tLeaves) = subTranspose(sortedLevels, leafPaths)
     val nodes = tNodes map { _.node }
     val leaves = tLeaves map { _.node }
@@ -172,7 +172,7 @@ object Transformations:
 /*! Ad Hoc console pretty printer for graphs.
  */
 object GraphPrettyPrinter:
-  def toString(node: TNode[_, _], indent: String = ""): String =
+  def toString(node: TNode[?, ?], indent: String = ""): String =
     val sb = new StringBuilder(indent + "|__" + node.conf)
     if node.base.isDefined then
       sb.append("*******")

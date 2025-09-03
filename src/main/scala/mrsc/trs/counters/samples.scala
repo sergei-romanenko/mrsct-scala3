@@ -34,10 +34,10 @@ case class CounterMultiResultTransformer(protocol: Protocol, l: Int)
 
 object CounterSamples extends App:
 
-  def graphSize(g: TGraph[_, _]): Int =
+  def graphSize(g: TGraph[?, ?]): Int =
     size(g.root)
 
-  def size(n: TNode[_, _]): Int = 1 + n.outs.map(out => size(out.node)).sum
+  def size(n: TNode[?, ?]): Int = 1 + n.outs.map(out => size(out.node)).sum
 
   def scProtocol(protocol: Protocol, l: Int): Unit =
     val transformer = CounterSingleResultTransformer(protocol, l)
@@ -60,7 +60,7 @@ object CounterSamples extends App:
       val minGraph = successGraphs.minBy(graphSize)
       println(minGraph)
 
-  def checkSubTree(unsafe: Conf => Boolean)(node: TNode[Conf, _]): Boolean =
+  def checkSubTree(unsafe: Conf => Boolean)(node: TNode[Conf, ?]): Boolean =
     !unsafe(node.conf) && node.outs.map(_.node).forall(checkSubTree(unsafe))
 
   def verifyProtocol(protocol: Protocol, findMinimalProof: Boolean = true): Unit =

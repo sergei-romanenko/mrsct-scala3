@@ -15,9 +15,8 @@ object SLLGen {
   def term(depth: Int): G[Expr] =
     if (depth == 0)
       terminalTerm
-    else {
+    else
       G.oneOf(call(depth), consGen(depth), terminalTerm)
-    }
 
   def consGen(depth: Int): G[Ctr] = for {
     head <- terminalTerm

@@ -117,25 +117,21 @@ object Samples:
     println("************************")
     println()
 
-    {
-      println("**classic+ up:**")
-      val m1 = classic1(HEByCouplingWhistle)(task.program)
-      residuateAndCheck(GraphGenerator(m1, task.target), task)
+    println("**classic+ up:**")
+    val m1 = classic1(HEByCouplingWhistle)(task.program)
+    residuateAndCheck(GraphGenerator(m1, task.target), task)
 
-      println("**classic+ down:**")
-      val m2 = classic2(HEByCouplingWhistle)(task.program)
-      residuateAndCheck(GraphGenerator(m2, task.target), task)
-    }
+    println("**classic+ down:**")
+    val m2 = classic2(HEByCouplingWhistle)(task.program)
+    residuateAndCheck(GraphGenerator(m2, task.target), task)
 
     println("**others:**")
 
-    {
-      val m3 = classic3(HEByCouplingWhistle)(task.program)
-      residuateAndCheck(GraphGenerator(m3, task.target), task)
+    val m3 = classic3(HEByCouplingWhistle)(task.program)
+    residuateAndCheck(GraphGenerator(m3, task.target), task)
 
-      val m4 = classic3(HEByCouplingWithRedexWhistle)(task.program)
-      residuateAndCheck(GraphGenerator(m4, task.target), task)
-    }
+    val m4 = classic3(HEByCouplingWithRedexWhistle)(task.program)
+    residuateAndCheck(GraphGenerator(m4, task.target), task)
 
     println()
 
@@ -162,16 +158,17 @@ object Samples:
 
 
   // count graphs
-  def count(gen: GraphGenerator[_, _], limit: Int = 1800): (Int, Int) =
+  def count(gen: GraphGenerator[?, ?], limit: Int = 1800): (Int, Int) =
     var completed = 0
     var unworkable = 0
-    for g <- gen do
-      if g.isComplete then
-        completed += 1
-      else
-        unworkable += 1
-      if completed + unworkable > limit then
-        return (-1, -1)
+    boundary:
+      for g <- gen do
+        if g.isComplete then
+          completed += 1
+        else
+          unworkable += 1
+        if completed + unworkable > limit then
+          break((-1, -1))
     (completed, unworkable)
 
   def countGraphs(task: SLLTask): Unit =

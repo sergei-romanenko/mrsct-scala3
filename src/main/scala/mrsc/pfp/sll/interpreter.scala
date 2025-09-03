@@ -36,14 +36,14 @@ private class SLLInterpreter(program: Program)
   def caseFRedex(ctx: Ctx, fcall: FCall): Expr =
     val reduced = subst(
       program.f(fcall.name).term,
-      Map(program.f(fcall.name).args.zip(fcall.args): _*))
+      Map(program.f(fcall.name).args.zip(fcall.args)*))
     ctx(reduced)
 
   def caseGRedexCtr(ctx: Ctx, gcall: GCall, ctr: Ctr): Expr =
     val g = program.g(gcall.name, ctr.name)
     val reduced = subst(
       g.term,
-      Map((g.p.args ::: g.args) zip (ctr.args ::: gcall.args.tail): _*))
+      Map((g.p.args ::: g.args) zip (ctr.args ::: gcall.args.tail)*))
     ctx(reduced)
 
   def caseGRedexVar(ctx: Ctx, g: GCall, v: Var): Expr =

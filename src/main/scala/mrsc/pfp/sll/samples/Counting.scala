@@ -1,5 +1,6 @@
 package mrsc.pfp.sll.samples
 
+import scala.util.boundary, boundary.break
 import scala.collection.immutable.TreeSet
 
 import mrsc.core._
@@ -57,13 +58,14 @@ object Counting extends App:
     var completed = 0
     var unworkable = 0
     var residuals = TreeSet[Expr]()
-    for g <- gen do
-      completed += 1
-      val tg = Transformations.transpose(g)
-      val expr = SLLResiduator.residuate(tg)
-      residuals += expr
-      if completed > limit then
-        return Left(CountingResult(completed, residuals))
+    boundary:
+      for g <- gen do
+        completed += 1
+        val tg = Transformations.transpose(g)
+        val expr = SLLResiduator.residuate(tg)
+        residuals += expr
+        if completed > limit then
+          break(Left(CountingResult(completed, residuals)))
     Right(CountingResult(completed, residuals))
 
   def compareScWithBinaryWhistle(task: SLLTask, whistle: PartialOrdering[Expr], limit: Int = 5000): Unit =
