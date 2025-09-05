@@ -34,4 +34,4 @@ object GenSpec extends Properties("Generalizations") {
     all(props1: _*) //&& all(props2: _*)
   }
 }
-*/
+ */

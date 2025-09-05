@@ -23,7 +23,6 @@ case class FCall(name: String, args: List[Expr]) extends Expr:
 
   override def toString: Name = name + args.mkString("(", ", ", ")")
 
-
 case class GCall(name: String, args: List[Expr]) extends Expr:
   lazy val size: Int = 1 + args.map(_.size).sum
 
@@ -60,22 +59,23 @@ case class FFun(name: String, args: List[Name], term: Expr) extends Def:
   override val rhs: Expr = term
 
 case class GFun(name: String, p: Pat, args: List[Name], term: Expr) extends Def:
-  override val lhs: GCall = GCall(name, Ctr(p.name, p.args map Var.apply) :: (args map Var.apply))
+  override val lhs: GCall =
+    GCall(name, Ctr(p.name, p.args map Var.apply) :: (args map Var.apply))
   override val rhs: Expr = term
 
 case class Program(defs: List[Def]):
   val f: Map[String, FFun] =
     (defs foldRight Map[String, FFun]()):
       case (x: FFun, m) => m + (x.name -> x)
-      case (_, m) => m
+      case (_, m)       => m
   val g: Map[(String, String), GFun] =
     (defs foldRight Map[(String, String), GFun]()):
       case (x: GFun, m) => m + ((x.name, x.p.name) -> x)
-      case (_, m) => m
+      case (_, m)       => m
   val gs: Map[String, List[GFun]] =
     (defs foldRight Map[String, List[GFun]]().withDefaultValue(Nil)):
       case (x: GFun, m) => m + (x.name -> (x :: m(x.name)))
-      case (_, m) => m
+      case (_, m)       => m
 
   override def toString: String = defs.mkString("\n")
 
@@ -118,7 +118,9 @@ object SLLParsers extends StandardTokenParsers with ImplicitConversions:
     fid ~ ("(" ~> repsep(lid, ",") <~ ")") ~ ("=" ~> term <~ ";") ^^ FFun.apply
 
   def gFun: SLLParsers.Parser[GFun] =
-    gid ~ ("(" ~> pat) ~ (rep("," ~> lid) <~ ")") ~ ("=" ~> term <~ ";") ^^ GFun.apply
+    gid ~ ("(" ~> pat) ~ (rep(
+      "," ~> lid
+    ) <~ ")") ~ ("=" ~> term <~ ";") ^^ GFun.apply
 
   def ctr: SLLParsers.Parser[Ctr] =
     uid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ Ctr.apply
@@ -129,7 +131,9 @@ object SLLParsers extends StandardTokenParsers with ImplicitConversions:
   def gcall: SLLParsers.Parser[GCall] =
     gid ~ ("(" ~> repsep(term, ",") <~ ")") ^^ GCall.apply
 
-  def parseProg(s: String): Program = Program(prog(new lexical.Scanner(new Reader(s))).get)
+  def parseProg(s: String): Program = Program(
+    prog(new lexical.Scanner(new Reader(s))).get
+  )
 
   def parseExpr(s: String): Expr =
     term(new lexical.Scanner(new Reader(s))).get

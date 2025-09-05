@@ -7,86 +7,114 @@ import mrsc.pfp._
 import mrsc.pfp.sll._
 
 trait PFPGraphBuilder
-  extends BasicGraphBuilder[Expr, DriveInfo[Expr]]
+    extends BasicGraphBuilder[Expr, DriveInfo[Expr]]
     with PFPTransformer[Expr]
     with SLLSyntax
     with SLLDriving
     with Folding[Expr]
 
-class MultiAllRebuildings(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiAllRebuildings(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with AllRebuildings[Expr]
 
-class MultiLowerRebuildings(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiLowerRebuildings(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with LowerRebuildingsOnBinaryWhistle[Expr]
 
-class MultiUpperRebuildings(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiUpperRebuildings(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with UpperRebuildingsOnBinaryWhistle[Expr]
 
-class MultiDoubleRebuildingsOnWhistle(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiDoubleRebuildingsOnWhistle(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with DoubleRebuildingsOnBinaryWhistle[Expr]
 
-class MultiLowerAllBinaryGens(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiLowerAllBinaryGens(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with LowerAllBinaryGensOnBinaryWhistle[Expr]
 
-class MultiLowerAllBinaryGensOrDrive(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiLowerAllBinaryGensOrDrive(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with LowerAllBinaryGensOrDriveOnBinaryWhistle[Expr]
 
-class MultiUpperAllBinaryGens(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiUpperAllBinaryGens(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with UpperAllBinaryGensOnBinaryWhistle[Expr]
 
-class MultiUpperAllBinaryGensOrDrive(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiUpperAllBinaryGensOrDrive(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with UpperAllBinaryGensOrDriveOnBinaryWhistle[Expr]
 
-class MultiDoubleAllBinaryGens(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class MultiDoubleAllBinaryGens(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with DoubleAllBinaryGensOnBinaryWhistle[Expr]
 
 class MultiDoubleMsg(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+    extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with DoubleMsgOnBinaryWhistle[Expr]
 
-class ClassicDangerousGen(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class ClassicDangerousGen(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with LowerMsgOrUpperMggOnBinaryWhistle[Expr]
 
-class ClassicCurrentGen(val program: Program, val ordering: PartialOrdering[Expr])
-  extends PFPGraphBuilder
+class ClassicCurrentGen(
+    val program: Program,
+    val ordering: PartialOrdering[Expr]
+) extends PFPGraphBuilder
     with BinaryWhistle[Expr]
     with MSGCurrentOrDriving[Expr]
 
 object Samples:
-  //type Transformer1 = Transformer[Expr, DriveInfo[Expr], Extra[Expr]]
+  // type Transformer1 = Transformer[Expr, DriveInfo[Expr], Extra[Expr]]
 
-  def multi1(w: PartialOrdering[Expr])(p: Program) = new MultiAllRebuildings(p, w)
+  def multi1(w: PartialOrdering[Expr])(p: Program) =
+    new MultiAllRebuildings(p, w)
 
-  def multi2(w: PartialOrdering[Expr])(p: Program) = new MultiLowerRebuildings(p, w)
+  def multi2(w: PartialOrdering[Expr])(p: Program) =
+    new MultiLowerRebuildings(p, w)
 
-  def multi3(w: PartialOrdering[Expr])(p: Program) = new MultiUpperRebuildings(p, w)
+  def multi3(w: PartialOrdering[Expr])(p: Program) =
+    new MultiUpperRebuildings(p, w)
 
-  def multi4(w: PartialOrdering[Expr])(p: Program) = new MultiDoubleRebuildingsOnWhistle(p, w)
+  def multi4(w: PartialOrdering[Expr])(p: Program) =
+    new MultiDoubleRebuildingsOnWhistle(p, w)
 
-  def classic1(w: PartialOrdering[Expr])(p: Program) = new ClassicDangerousGen(p, w)
+  def classic1(w: PartialOrdering[Expr])(p: Program) =
+    new ClassicDangerousGen(p, w)
 
-  def classic2(w: PartialOrdering[Expr])(p: Program) = new ClassicCurrentGen(p, w)
+  def classic2(w: PartialOrdering[Expr])(p: Program) =
+    new ClassicCurrentGen(p, w)
 
   def classic3(w: PartialOrdering[Expr])(p: Program) = new MultiDoubleMsg(p, w)
 
@@ -100,7 +128,10 @@ object Samples:
     val tmp = init + s
     tmp takeRight n
 
-  private def residuateAndCheck(gen: GraphGenerator[Expr, DriveInfo[Expr]], task: SLLTask): Unit =
+  private def residuateAndCheck(
+      gen: GraphGenerator[Expr, DriveInfo[Expr]],
+      task: SLLTask
+  ): Unit =
     for g <- gen if g.isComplete do
       val t = Transformations.transpose(g)
       println(t)
@@ -108,7 +139,7 @@ object Samples:
       println(PrettySLL.pretty(res))
       Checker.check(task, Lifting.expr2Task(res))
 
-  // just tries classic variants of 
+  // just tries classic variants of
   // SLL supercompilation
   def showResidualPrograms(task: SLLTask): Unit =
 
@@ -156,19 +187,15 @@ object Samples:
     showResidualPrograms(SLLTasks.namedTasks("App"))
     showResidualPrograms(SLLTasks.namedTasks("Idle"))
 
-
   // count graphs
   def count(gen: GraphGenerator[?, ?], limit: Int = 1800): (Int, Int) =
     var completed = 0
     var unworkable = 0
     boundary:
       for g <- gen do
-        if g.isComplete then
-          completed += 1
-        else
-          unworkable += 1
-        if completed + unworkable > limit then
-          break((-1, -1))
+        if g.isComplete then completed += 1
+        else unworkable += 1
+        if completed + unworkable > limit then break((-1, -1))
     (completed, unworkable)
 
   def countGraphs(task: SLLTask): Unit =
@@ -178,7 +205,8 @@ object Samples:
     val transformers = List(
       new MultiDoubleMsg(task.program, HEByCouplingWhistle),
       new MultiDoubleRebuildingsOnWhistle(task.program, HEWhistle),
-      new MultiAllRebuildings(task.program, HEWhistle))
+      new MultiAllRebuildings(task.program, HEWhistle)
+    )
 
     transformers foreach { m =>
       val gen = GraphGenerator(m, task.target)
@@ -199,7 +227,7 @@ object Samples:
     println()
 
     countGraphs(SLLTasks.namedTasks("NaiveFib"))
-    //countGraphs(SLLTasks.namedTasks("FastFib"))
+    // countGraphs(SLLTasks.namedTasks("FastFib"))
     countGraphs(SLLTasks.namedTasks("EqPlus"))
     countGraphs(SLLTasks.namedTasks("EqPlusa"))
     countGraphs(SLLTasks.namedTasks("EqPlusb"))
@@ -228,7 +256,7 @@ object Samples:
   def main(args: Array[String]): Unit =
 
     // 85726 completed graphs here:
-    //preRun(SLLTasks.namedTasks("FastFib"))
+    // preRun(SLLTasks.namedTasks("FastFib"))
 
     // 0 results here (because only UP generalization is allowed)
     // runTask(SLLTasks.namedTasks("FastFib"), multi3(HEByCouplingWhistle)_)
@@ -236,5 +264,3 @@ object Samples:
     countGraphsForTasks()
 
     showResidualProgramsForTasks()
-
-

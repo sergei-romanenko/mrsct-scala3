@@ -8,12 +8,13 @@ object HE:
   def he(t1: Expr, t2: Expr): Boolean =
     (t1.size <= t2.size) && (heByDiving(t1, t2) || heByCoupling(t1, t2))
 
-  private def heByDiving(t1: Expr, t2: Expr): Boolean = (t1.size < t2.size) && (t2 match {
-    case Ctr(_, args) => args exists (he(t1, _))
-    case FCall(_, args) => args exists (he(t1, _))
-    case GCall(_, args) => args exists (he(t1, _))
-    case _ => false
-  })
+  private def heByDiving(t1: Expr, t2: Expr): Boolean =
+    (t1.size < t2.size) && (t2 match {
+      case Ctr(_, args)   => args exists (he(t1, _))
+      case FCall(_, args) => args exists (he(t1, _))
+      case GCall(_, args) => args exists (he(t1, _))
+      case _              => false
+    })
 
   def heByCoupling(t1: Expr, t2: Expr): Boolean =
     (t1.size <= t2.size) && ((t1, t2) match {
@@ -30,8 +31,8 @@ object HE:
 
   def b(t: Expr): Int = t match
     case GCall(_, args) => b(args.head)
-    case Var(_) => 1
-    case _ => 0
+    case Var(_)         => 1
+    case _              => 0
 
 object HEWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"
@@ -43,7 +44,7 @@ object HEWhistle extends SimplePartialOrdering[Expr]:
       e1 match
         case Let(_, _) => false
         case Ctr(_, _) => false
-        case _ => HE.he(e1, e2)
+        case _         => HE.he(e1, e2)
 
 object HEWithRedexWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"
@@ -55,7 +56,7 @@ object HEWithRedexWhistle extends SimplePartialOrdering[Expr]:
       e1 match
         case Let(_, _) => false
         case Ctr(_, _) => false
-        case _ => HE.he_*(e1, e2)
+        case _         => HE.he_*(e1, e2)
 
 object HEByCouplingWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"
@@ -67,7 +68,7 @@ object HEByCouplingWhistle extends SimplePartialOrdering[Expr]:
       e1 match
         case Let(_, _) => false
         case Ctr(_, _) => false
-        case _ => HE.heByCoupling(e1, e2)
+        case _         => HE.heByCoupling(e1, e2)
 
 object HEByCouplingWithRedexWhistle extends SimplePartialOrdering[Expr]:
   val name = "homeomorphic embedding"

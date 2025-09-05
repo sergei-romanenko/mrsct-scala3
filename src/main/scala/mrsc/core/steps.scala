@@ -2,9 +2,9 @@ package mrsc.core
 
 /*!# Abstract steps
    Under the hood an abstract transformer deals with some kind of semantics of the language.
-   Low-level operations should be translated into high-level abstract operations (or messages) 
+   Low-level operations should be translated into high-level abstract operations (or messages)
    over SC graphs.
-*/
+ */
 
 trait GraphBuilder[C, D] extends GraphTypes[C, D]:
   def completeCurrentNode()(g: G): G
@@ -19,10 +19,12 @@ trait GraphBuilder[C, D] extends GraphTypes[C, D]:
 
 trait BasicGraphBuilder[C, D] extends GraphBuilder[C, D]:
 
-  def completeCurrentNode()(g: G): SGraph[C,D] =
-    SGraph(g.incompleteLeaves.tail,
+  def completeCurrentNode()(g: G): SGraph[C, D] =
+    SGraph(
+      g.incompleteLeaves.tail,
       g.current :: g.completeLeaves,
-      g.current :: g.completeNodes)
+      g.current :: g.completeNodes
+    )
 
   def addChildNodes(ns: List[(C, D)])(g: G): G =
     val deltaLeaves: List[N] = ns.zipWithIndex map:
@@ -32,11 +34,19 @@ trait BasicGraphBuilder[C, D] extends GraphBuilder[C, D]:
     // Now it is depth-first traversal. If you change
     // deltaLeaves ++ ls -> ls ++ deltaLeaves,
     // you will have breadth-first traversal
-    SGraph(deltaLeaves ++ g.incompleteLeaves.tail, g.completeLeaves, g.current :: g.completeNodes)
+    SGraph(
+      deltaLeaves ++ g.incompleteLeaves.tail,
+      g.completeLeaves,
+      g.current :: g.completeNodes
+    )
 
   def fold(baseNode: N)(g: G): G =
     val node = g.current.copy(base = Some(baseNode.sPath))
-    SGraph(g.incompleteLeaves.tail, node :: g.completeLeaves, node :: g.completeNodes)
+    SGraph(
+      g.incompleteLeaves.tail,
+      node :: g.completeLeaves,
+      node :: g.completeNodes
+    )
 
   def rebuild(c: C)(g: G): G =
     val node = g.current.copy(conf = c)

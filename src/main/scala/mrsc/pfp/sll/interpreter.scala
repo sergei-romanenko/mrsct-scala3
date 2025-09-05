@@ -9,8 +9,7 @@ object SLLInterpreter:
     val int = new SLLInterpreter(task.program)
     int.eval(task.target)
 
-private class SLLInterpreter(program: Program)
-  extends Reducer:
+private class SLLInterpreter(program: Program) extends Reducer:
 
   type R = Expr
 
@@ -20,8 +19,8 @@ private class SLLInterpreter(program: Program)
 
   @tailrec
   private def lazyEval(e: Expr): Expr = baseLazyEval(e) match
-    case e1@Ctr(_, _) => e1
-    case e1 => lazyEval(e1)
+    case e1 @ Ctr(_, _) => e1
+    case e1             => lazyEval(e1)
 
   private def baseLazyEval(t: Expr): Expr = decompose(t)
 
@@ -36,16 +35,17 @@ private class SLLInterpreter(program: Program)
   def caseFRedex(ctx: Ctx, fcall: FCall): Expr =
     val reduced = subst(
       program.f(fcall.name).term,
-      Map(program.f(fcall.name).args.zip(fcall.args)*))
+      Map(program.f(fcall.name).args.zip(fcall.args)*)
+    )
     ctx(reduced)
 
   def caseGRedexCtr(ctx: Ctx, gcall: GCall, ctr: Ctr): Expr =
     val g = program.g(gcall.name, ctr.name)
     val reduced = subst(
       g.term,
-      Map((g.p.args ::: g.args) zip (ctr.args ::: gcall.args.tail)*))
+      Map((g.p.args ::: g.args) zip (ctr.args ::: gcall.args.tail)*)
+    )
     ctx(reduced)
 
   def caseGRedexVar(ctx: Ctx, g: GCall, v: Var): Expr =
     throw new Error("unexpected expression: " + v)
-

@@ -19,9 +19,9 @@ trait Reducer:
   type Ctx = Expr => Expr
 
   def decompose(t: Expr): R = (t: @unchecked) match
-    case l: Let => caseDecLet(l)
-    case c: Ctr => caseObservableCtr(c)
-    case v: Var => caseObservableVar(v)
+    case l: Let   => caseDecLet(l)
+    case c: Ctr   => caseObservableCtr(c)
+    case v: Var   => caseObservableVar(v)
     case f: FCall => caseFRedex(t => t, f)
     case g: GCall => decomposeGCall(t => t, g)
 

@@ -30,31 +30,30 @@ object Counting extends App:
     SLLTask("gApp(xs, ys)", program),
     SLLTask("gApp(xs, xs)", program),
     SLLTask("gLastNil(gApp(xs, xs))", program),
-
     SLLTask("gRev(xs)", program),
     SLLTask("gFRev(xs, Nil())", program),
-
     SLLTask("gRev(gRev(xs))", program),
     SLLTask("gFRev(gRev(xs), Nil())", program),
     SLLTask("gRev(gFRev(xs, Nil()))", program),
     SLLTask("gFRev(gFRev(xs, Nil()), Nil())", program),
-
     SLLTask("gLastNil(gRev(gRev(xs)))", program),
     SLLTask("gLastNil(gFRev(gRev(xs), Nil()))", program),
     SLLTask("gLastNil(gRev(gFRev(xs, Nil())))", program),
     SLLTask("gLastNil(gFRev(gFRev(xs, Nil()), Nil()))", program),
-
     SLLTask("gApp(gRev(xs), ys)", program),
     SLLTask("gApp(gRev(xs), xs)", program),
     SLLTask("gApp(xs, gRev(ys))", program),
     SLLTask("gApp(xs, gRev(xs))", program),
     SLLTask("gApp(gRev(xs), gRev(ys))", program),
-    SLLTask("gApp(gRev(xs), gRev(xs))", program))
+    SLLTask("gApp(gRev(xs), gRev(xs))", program)
+  )
 
   implicit val exprOrdering: Ordering[Expr] = Ordering.by(_.size)
 
-  def sc(gen: Iterator[SGraph[Expr, DriveInfo[Expr]]],
-         limit: Int): Either[CountingResult, CountingResult] =
+  def sc(
+      gen: Iterator[SGraph[Expr, DriveInfo[Expr]]],
+      limit: Int
+  ): Either[CountingResult, CountingResult] =
     var completed = 0
     var unworkable = 0
     var residuals = TreeSet[Expr]()
@@ -68,7 +67,11 @@ object Counting extends App:
           break(Left(CountingResult(completed, residuals)))
     Right(CountingResult(completed, residuals))
 
-  def compareScWithBinaryWhistle(task: SLLTask, whistle: PartialOrdering[Expr], limit: Int = 5000): Unit =
+  def compareScWithBinaryWhistle(
+      task: SLLTask,
+      whistle: PartialOrdering[Expr],
+      limit: Int = 5000
+  ): Unit =
     println()
     println("===== " + task.target + " ====")
 
@@ -79,13 +82,14 @@ object Counting extends App:
       new MultiUpperAllBinaryGensOrDrive(task.program, whistle),
       new MultiLowerAllBinaryGens(task.program, whistle),
       new MultiLowerAllBinaryGensOrDrive(task.program, whistle),
-      new MultiDoubleAllBinaryGens(task.program, whistle))
+      new MultiDoubleAllBinaryGens(task.program, whistle)
+    )
 
     transformers.foreach { m =>
       val gen = GraphGenerator(m, task.target)
       val res = sc(gen, limit)
       res match
-        case Left(res1) => print("- " + (res1.completed, res1.residuals.size))
+        case Left(res1)  => print("- " + (res1.completed, res1.residuals.size))
         case Right(res1) => print("+ " + (res1.completed, res1.residuals.size))
       println("\t" + m.getClass.getSimpleName)
     }
@@ -97,4 +101,6 @@ object Counting extends App:
   println("======================")
   println("==== CouplingRedex ====")
   println("======================")
-  tasks.foreach(compareScWithBinaryWhistle(_, HEByCouplingWithRedexWhistle, 1000000))
+  tasks.foreach(
+    compareScWithBinaryWhistle(_, HEByCouplingWithRedexWhistle, 1000000)
+  )
